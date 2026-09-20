@@ -21,12 +21,19 @@ in
   ]
   ++ appModules;
 
+  nixpkgs.overlays = [ inputs.helium.overlays.default ];
+
   # - boot process
 
   boot = {
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
+      systemd-boot.configurationLimit = 5;
+      systemd-boot.extraInstallCommands = ''
+        ${pkgs.gnused}/bin/sed -i '/^default /d' /boot/loader/loader.conf
+        printf '%s\n' 'default auto-windows' >> /boot/loader/loader.conf
+      '';
     };
 
     kernelPackages = pkgs.linuxPackages_latest;
@@ -39,6 +46,7 @@ in
     "flakes"
   ];
   nixpkgs.config.allowUnfree = true;
+  programs.nix-ld.enable = true;
 
   # - system
 
@@ -71,7 +79,6 @@ in
     printing.enable = true;
   };
 
-  # Make GNOME extension GObject Introspection typelibs discoverable.
   environment.sessionVariables.GI_TYPELIB_PATH = pkgs.lib.makeSearchPath "lib/girepository-1.0" [
     pkgs.gnome-menus
     pkgs.libgtop
@@ -103,13 +110,17 @@ in
 
   environment.systemPackages = with pkgs; [
     # - browser and socials
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    helium
     ayugram-desktop
     discord
+
+    # - other shi
+    spotify
 
     # - opsec mr robot larp
     bitwarden-desktop
     mullvad-vpn
+    tor-browser
 
     # - dev
     ghostty
@@ -127,17 +138,11 @@ in
     # - gnome
     gnome-browser-connector
     gnome-menus
+
+    # - tools
+    qbittorrent
+    xarchiver
+    unrar
+    vlc
   ];
-
-  # - cli shortcuts
-
-  environment.shellAliases = {
-    rebuild = "sudo nixos-rebuild switch --flake /home/user/nixfiles#nixos";
-    editcfg = "nano /home/user/nixfiles/configuration.nix";
-    editflake = "nano /home/user/nixfiles/flake.nix";
-    update = "cd /home/user/nixfiles && nix flake update && sudo nixos-rebuild switch --flake .#nixos";
-    check = "sudo nixos-rebuild dry-build --flake /home/user/nixfiles#nixos";
-    nixclear = "sudo nix-collect-garbage -d";
-  };
-
 }

@@ -12,7 +12,7 @@
 
       stylix.targets = {
         gtk.enable = true;
-        gnome.enable = false;
+        gnome.enable = true;
       };
 
       dconf.settings."org/gnome/desktop/background" = {

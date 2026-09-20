@@ -9,6 +9,18 @@
     imageScalingMode = "fill";
     polarity = "dark";
 
+    cursor = {
+      package = pkgs.whitesur-cursors;
+      name = "WhiteSur-cursors";
+      size = 24;
+    };
+
+    icons = {
+      enable = true;
+      package = pkgs.papirus-icon-theme;
+      dark = "Papirus-Dark";
+    };
+
     # The wallpaper is nearly monochrome, so use a high-contrast night palette.
     base16Scheme = {
       base00 = "0B111B";

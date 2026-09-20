@@ -2,6 +2,10 @@
 
 {
   programs.fish.enable = true;
+  programs.fish.shellInit = "set -g fish_greeting"; # - disable fish shell greeting
+
+  # - cli shortcuts are now here
+
   programs.fish.shellAliases = {
     rebuild = "sudo nixos-rebuild switch --flake /home/user/nixfiles#nixos";
     editcfg = "nano /home/user/nixfiles/configuration.nix";
